@@ -1,39 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   megaphone.cpp                                      :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/02 01:12:25 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/02 01:12:29 by ozetlers         ###   ########.fr       */
+/*   Created: 2026/08/02 01:04:38 by ozetlers          #+#    #+#             */
+/*   Updated: 2026/08/02 01:04:47 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cctype>
+#include "PhoneBook.hpp"
+
 #include <iostream>
+#include <string>
 
-int	main(int argc, char **argv)
+int main()
 {
-	int	i;
-	int	j;
+	PhoneBook phoneBook;
+	std::string command;
 
-	if (argc == 1)
+	while (true)
 	{
-		std::cout << "* LOUD AND UNBEARABLE FEEDBACK NOISE *" << std::endl;
-		return (0);
-	}
-	i = 1;
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j] != '\0')
+		std::cout << "Enter a command (ADD, SEARCH, EXIT):" << std::endl;
+		if (!std::getline(std::cin, command))
+			break;
+		if (command == "ADD")
 		{
-			std::cout << static_cast<char>(std::toupper(static_cast<unsigned char>(argv[i][j])));
-			j++;
+			if (!phoneBook.addContact())
+				break;
 		}
-		i++;
+		else if (command == "SEARCH")
+		{
+			if (!phoneBook.searchContacts())
+				break;
+		}
+		else if (command == "EXIT")
+			break;
 	}
-	std::cout << std::endl;
-	return (0);
+	return 0;
 }
