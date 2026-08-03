@@ -6,7 +6,7 @@
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 01:04:01 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/02 03:57:11 by ozetlers         ###   ########.fr       */
+/*   Updated: 2026/08/03 05:51:29 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,53 @@ namespace
 		"Darkest secret:"
 	};
 
+	// Per-field validation: a field's prompt, acceptance predicate, and
+	// rejection message live at the same index of FIELD_PROMPTS,
+	// FIELD_CHECKS, and FIELD_COMPLAINTS.
+	bool isAcceptableField(const std::string &text);
+	bool isAcceptablePhoneNumber(const std::string &text);
+
+	typedef bool (*FieldCheck)(const std::string &);
+
+	const char *const GENERIC_COMPLAINT =
+		"A field needs at least one character other than a "
+		"space, and no control characters.";
+
+	const char *const PHONE_COMPLAINT =
+		"A phone number needs at least one digit "
+		"and no characters other than digits.";
+
+	const FieldCheck FIELD_CHECKS[FIELD_COUNT] =
+	{
+		isAcceptableField,
+		isAcceptableField,
+		isAcceptableField,
+		isAcceptablePhoneNumber,
+		isAcceptableField
+	};
+
+	const char *const FIELD_COMPLAINTS[FIELD_COUNT] =
+	{
+		GENERIC_COMPLAINT,
+		GENERIC_COMPLAINT,
+		GENERIC_COMPLAINT,
+		PHONE_COMPLAINT,
+		GENERIC_COMPLAINT
+	};
+
 	// Counts encoded characters rather than bytes. In UTF-8 a continuation
 	// byte matches 10xxxxxx; every other byte starts a new character. For
 	// pure ASCII this returns the same value as std::string::length().
 	std::string::size_type characterCount(const std::string &text)
 	{
 		std::string::size_type count = 0;
+		std::string::size_type i = 0;
 
-		for (std::string::size_type i = 0; i < text.length(); ++i)
+		while (i < text.length())
 		{
 			if ((static_cast<unsigned char>(text[i]) & 0xC0) != 0x80)
 				++count;
+			++i;
 		}
 		return count;
 	}
@@ -60,8 +96,9 @@ namespace
 		std::string::size_type wanted)
 	{
 		std::string::size_type seen = 0;
+		std::string::size_type i = 0;
 
-		for (std::string::size_type i = 0; i < text.length(); ++i)
+		while (i < text.length())
 		{
 			if ((static_cast<unsigned char>(text[i]) & 0xC0) != 0x80)
 			{
@@ -69,6 +106,7 @@ namespace
 					return i;
 				++seen;
 			}
+			++i;
 		}
 		return text.length();
 	}
@@ -120,8 +158,9 @@ namespace
 	bool isAcceptableField(const std::string &text)
 	{
 		bool hasVisible = false;
+		std::string::size_type i = 0;
 
-		for (std::string::size_type i = 0; i < text.length(); ++i)
+		while (i < text.length())
 		{
 			unsigned char byte = static_cast<unsigned char>(text[i]);
 
@@ -129,24 +168,46 @@ namespace
 				return false;
 			if (byte != ' ')
 				hasVisible = true;
+			++i;
 		}
 		return hasVisible;
 	}
 
-	// Prompts until an acceptable value is entered. Returns false only at
-	// end-of-file; an unacceptable entry is reported and re-prompted here
-	// and is never visible to the caller.
-	bool readField(const std::string &prompt, std::string &value)
+	// Digits-only filter for the phone-number field: acceptable when the
+	// text is non-empty and every byte is a decimal digit. '0'..'9' are
+	// contiguous and ascending in every conforming character set, and
+	// every byte of a multi-byte sequence is 0x80 or above, so it fails
+	// the range test whatever the signedness of plain char: unlike
+	// isAcceptableField, this guarantee is not merely ASCII-scoped.
+	bool isAcceptablePhoneNumber(const std::string &text)
+	{
+		std::string::size_type i = 0;
+
+		if (text.empty())
+			return false;
+		while (i < text.length())
+		{
+			if (text[i] < '0' || text[i] > '9')
+				return false;
+			++i;
+		}
+		return true;
+	}
+
+	// Prompts until a value passing isAcceptable is entered. Returns false
+	// only at end-of-file; an unacceptable entry is reported with
+	// complaint and re-prompted here and is never visible to the caller.
+	bool readField(const std::string &prompt, std::string &value,
+		FieldCheck isAcceptable, const char *complaint)
 	{
 		while (true)
 		{
 			std::cout << prompt << std::endl;
 			if (!std::getline(std::cin, value))
 				return false;
-			if (isAcceptableField(value))
+			if (isAcceptable(value))
 				return true;
-			std::cout << "A field needs at least one character other than a "
-				"space, and no control characters." << std::endl;
+			std::cout << complaint << std::endl;
 		}
 	}
 }
@@ -173,11 +234,14 @@ PhoneBook::Outcome PhoneBook::addContact()
 {
 	std::string fields[FIELD_COUNT];
 	Contact newContact;
+	int i = 0;
 
-	for (int i = 0; i < FIELD_COUNT; ++i)
+	while (i < FIELD_COUNT)
 	{
-		if (!readField(FIELD_PROMPTS[i], fields[i]))
+		if (!readField(FIELD_PROMPTS[i], fields[i], FIELD_CHECKS[i],
+				FIELD_COMPLAINTS[i]))
 			return InputClosed;
+		++i;
 	}
 	newContact.setFirstName(fields[0]);
 	newContact.setLastName(fields[1]);
@@ -191,8 +255,10 @@ PhoneBook::Outcome PhoneBook::addContact()
 
 void PhoneBook::displayContactList() const
 {
+	int index = 0;
+
 	printRow("index", "first name", "last name", "nickname");
-	for (int index = 0; index < contactCount_; ++index)
+	while (index < contactCount_)
 	{
 		const Contact &contact = contacts_[slotOf(index)];
 		std::ostringstream label;
@@ -200,6 +266,7 @@ void PhoneBook::displayContactList() const
 		label << index;
 		printRow(label.str(), contact.getFirstName(), contact.getLastName(),
 			contact.getNickname());
+		++index;
 	}
 }
 

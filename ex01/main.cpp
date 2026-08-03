@@ -6,7 +6,7 @@
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 01:04:38 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/02 01:04:47 by ozetlers         ###   ########.fr       */
+/*   Updated: 2026/08/03 05:36:50 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ int main()
 			break;
 		if (command == "ADD")
 		{
-			if (!phoneBook.addContact())
+			if (phoneBook.addContact() == PhoneBook::InputClosed)
 				break;
 		}
 		else if (command == "SEARCH")
 		{
-			if (!phoneBook.searchContacts())
+			if (phoneBook.searchContacts() == PhoneBook::InputClosed)
 				break;
 		}
 		else if (command == "EXIT")
