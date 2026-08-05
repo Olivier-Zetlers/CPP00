@@ -6,7 +6,7 @@
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 01:03:42 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/02 19:15:45 by ozetlers         ###   ########.fr       */
+/*   Updated: 2026/08/05 04:42:31 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@
 class PhoneBook
 {
 public:
-	// Outcome of one command. The read-eval-print loop continues on
-	// Completed and stops on InputClosed. Rejected reports an unusable
-	// user entry; it is produced only by readIndex() and is handled
-	// inside the class, so it never reaches main().
 	enum Outcome
 	{
 		Completed,
