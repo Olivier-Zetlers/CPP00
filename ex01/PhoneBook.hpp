@@ -18,17 +18,17 @@
 class PhoneBook
 {
 public:
-	enum Outcome
-	{
-		Completed,
-		Rejected,
-		InputClosed
-	};
-
 	PhoneBook();
 
-	Outcome addContact();
-	Outcome searchContacts() const;
+	// Runs one ADD command: reads the five fields, then stores the
+	// contact. Returns false only when standard input closes; an
+	// unacceptable field value is re-prompted internally.
+	bool addContact();
+
+	// Runs one SEARCH command: lists the contacts, then displays the
+	// one whose index the user enters. Returns false only when standard
+	// input closes; an invalid index is reported, not re-prompted.
+	bool searchContacts() const;
 
 private:
 	static const int CAPACITY = 8;
@@ -37,12 +37,8 @@ private:
 	int contactCount_;
 	int nextIndex_;
 
-	// Maps a displayed index (0 is the oldest stored contact) to the slot
-	// it occupies in the ring buffer.
-	// Precondition: 0 <= index < contactCount_.
-	int slotOf(int index) const;
-
 	// Inserts contact, evicting the oldest one once the book is full.
+	// A stored contact keeps its displayed index until it is evicted.
 	void storeContact(const Contact &contact);
 
 	void displayContactList() const;
@@ -50,11 +46,6 @@ private:
 	// Precondition: 0 <= index < contactCount_. The caller must validate;
 	// this function does not.
 	void displayContact(int index) const;
-
-	// Prompts for, reads and validates one index. On Completed the index
-	// is written to the parameter; on Rejected and InputClosed the
-	// parameter is left untouched.
-	Outcome readIndex(int &index) const;
 };
 
 #endif

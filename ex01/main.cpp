@@ -27,12 +27,12 @@ int main()
 			break;
 		if (command == "ADD")
 		{
-			if (phoneBook.addContact() == PhoneBook::InputClosed)
+			if (!phoneBook.addContact())
 				break;
 		}
 		else if (command == "SEARCH")
 		{
-			if (phoneBook.searchContacts() == PhoneBook::InputClosed)
+			if (!phoneBook.searchContacts())
 				break;
 		}
 		else if (command == "EXIT")

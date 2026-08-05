@@ -12,38 +12,22 @@
 
 #include "Contact.hpp"
 
+// The std::string members need no explicit initializers: a member of
+// class type is default-constructed when the initialization list omits
+// it.
 Contact::Contact()
-	: firstName_(),
-	  lastName_(),
-	  nickname_(),
-	  phoneNumber_(),
-	  darkestSecret_()
 {
 }
 
-void Contact::setFirstName(const std::string &firstName)
+Contact::Contact(const std::string &firstName, const std::string &lastName,
+	const std::string &nickname, const std::string &phoneNumber,
+	const std::string &darkestSecret)
+	: firstName_(firstName),
+	  lastName_(lastName),
+	  nickname_(nickname),
+	  phoneNumber_(phoneNumber),
+	  darkestSecret_(darkestSecret)
 {
-	firstName_ = firstName;
-}
-
-void Contact::setLastName(const std::string &lastName)
-{
-	lastName_ = lastName;
-}
-
-void Contact::setNickname(const std::string &nickname)
-{
-	nickname_ = nickname;
-}
-
-void Contact::setPhoneNumber(const std::string &phoneNumber)
-{
-	phoneNumber_ = phoneNumber;
-}
-
-void Contact::setDarkestSecret(const std::string &darkestSecret)
-{
-	darkestSecret_ = darkestSecret;
 }
 
 const std::string &Contact::getFirstName() const
