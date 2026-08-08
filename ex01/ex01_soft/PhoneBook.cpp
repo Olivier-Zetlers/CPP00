@@ -6,7 +6,7 @@
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 01:04:01 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/08 02:35:19 by ozetlers         ###   ########.fr       */
+/*   Updated: 2026/08/08 14:48:12 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void printNameColumns(std::string first, std::string second,
 // value. Returns false only at end-of-file: the subject requires that
 // a saved contact has no empty field, so an empty entry is reported
 // and re-prompted here, and is never visible to the caller.
-static bool readRequiredField(std::string prompt, std::string *value)
+static bool readField(std::string prompt, std::string *value)
 {
 	while (true)
 	{
@@ -86,7 +86,7 @@ void PhoneBook::storeContact(Contact contact)
 	contacts_[nextIndex_] = contact;
 	nextIndex_ = (nextIndex_ + 1) % MAX_CONTACTS;
 	if (contactCount_ < MAX_CONTACTS)
-		++contactCount_;
+		contactCount_++;
 }
 
 bool PhoneBook::addContact()
@@ -97,15 +97,15 @@ bool PhoneBook::addContact()
 	std::string phone;
 	std::string secret;
 
-	if (!readRequiredField("First name:", &first))
+	if (!readField("First name:", &first))
 		return false;
-	if (!readRequiredField("Last name:", &last))
+	if (!readField("Last name:", &last))
 		return false;
-	if (!readRequiredField("Nickname:", &nickname))
+	if (!readField("Nickname:", &nickname))
 		return false;
-	if (!readRequiredField("Phone number:", &phone))
+	if (!readField("Phone number:", &phone))
 		return false;
-	if (!readRequiredField("Darkest secret:", &secret))
+	if (!readField("Darkest secret:", &secret))
 		return false;
 	storeContact(Contact(first, last, nickname, phone, secret));
 	std::cout << "Contact added." << std::endl;
@@ -148,15 +148,14 @@ void PhoneBook::displayContact(int index) const
 
 bool PhoneBook::searchContacts() const
 {
+	std::string input;
+
 	if (contactCount_ == 0)
 	{
 		std::cout << "The phonebook is empty." << std::endl;
 		return true;
 	}
 	displayContactList();
-
-	std::string input;
-
 	std::cout << "Index to display:" << std::endl;
 	if (!std::getline(std::cin, input))
 		return false;
