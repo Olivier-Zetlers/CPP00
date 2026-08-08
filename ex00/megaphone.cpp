@@ -6,14 +6,14 @@
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 01:12:25 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/02 01:12:29 by ozetlers         ###   ########.fr       */
+/*   Updated: 2026/08/08 17:11:21 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cctype>
 #include <iostream>
 
-int	main(int argc, char **argv)
+int	main(int argc, char *argv[])
 {
 	int	i;
 	int	j;
