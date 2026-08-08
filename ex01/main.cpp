@@ -6,12 +6,11 @@
 /*   By: ozetlers <ozetlers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 01:04:38 by ozetlers          #+#    #+#             */
-/*   Updated: 2026/08/08 02:35:31 by ozetlers         ###   ########.fr       */
+/*   Updated: 2026/08/08 16:40:41 by ozetlers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PhoneBook.hpp"
-
 #include <iostream>
 #include <string>
 
@@ -38,5 +37,5 @@ int main()
 		else if (command == "EXIT")
 			break;
 	}
-	return 0;
+	return (0);
 }
